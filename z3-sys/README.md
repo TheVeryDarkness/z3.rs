@@ -37,6 +37,16 @@ $ Z3_SYS_Z3_HEADER="/path/to/my/z3.h" cargo build
 
 in your project will use `/path/to/my/z3.h` instead.
 
+By the way, using Cargo config (see [Environment variables](https://doc.rust-lang.org/cargo/reference/config.html#environment-variables) is also available.
+
+And the path to the directory where `z3.lib` or `libz3.lib` is placed can also be specified via an environment variable `Z3_SYS_Z3_LIB_DIR`. I.e., running:
+
+```console
+$ Z3_SYS_Z3_LIB_DIR="/path/to/my/z3/lib/" cargo build
+```
+
+in your project will ask the linker to search in `/path/to/my/z3/lib/` instead.
+
 ## Support and Maintenance
 
 I am developing this library largely on my own so far. I am able

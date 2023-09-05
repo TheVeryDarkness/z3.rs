@@ -1,6 +1,7 @@
 use std::env;
 
 const Z3_HEADER_VAR: &str = "Z3_SYS_Z3_HEADER";
+const Z3_LIB_VAR: &str = "Z3_SYS_Z3_LIB_DIR";
 
 fn main() {
     #[cfg(feature = "static-link-z3")]
@@ -17,6 +18,17 @@ fn main() {
     };
     println!("cargo:rerun-if-env-changed={}", Z3_HEADER_VAR);
     println!("cargo:rerun-if-changed={}", header);
+    
+    if let Ok(lib_dir) = std::env::var(Z3_LIB_VAR) {
+        println!("cargo:rustc-link-search={}", lib_dir);
+    };
+    if cfg!(windows) {
+        println!("cargo:rustc-link-lib=libz3");
+    } else {
+        println!("cargo:rustc-link-lib=z3");
+    }
+    println!("cargo:rerun-if-env-changed={}", Z3_LIB_VAR);
+
     let out_path = std::path::PathBuf::from(std::env::var("OUT_DIR").unwrap());
 
     for x in &[

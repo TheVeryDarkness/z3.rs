@@ -7656,11 +7656,3 @@ extern "C" {
     /// Best-effort quantifier elimination
     pub fn Z3_qe_lite(c: Z3_context, vars: Z3_ast_vector, body: Z3_ast) -> Z3_ast;
 }
-
-#[cfg(not(windows))]
-#[link(name = "z3")]
-extern "C" {}
-
-#[cfg(windows)]
-#[link(name = "libz3")]
-extern "C" {}
