@@ -31,21 +31,35 @@ z3-sys = "0.8"
 * Alternatively, the path to the desired `z3.h` can be specified via the environment variable
 `Z3_SYS_Z3_HEADER`. I.e., running:
 
-```console
-$ Z3_SYS_Z3_HEADER="/path/to/my/z3.h" cargo build
-```
+  ```console
+  $ Z3_SYS_Z3_HEADER="/path/to/my/z3.h" cargo build
+  ```
 
-in your project will use `/path/to/my/z3.h` instead.
+  in your project will use `/path/to/my/z3.h` instead.
 
-By the way, using Cargo config (see [Environment variables](https://doc.rust-lang.org/cargo/reference/config.html#environment-variables) is also available.
+  By the way, using Cargo config (see [Environment variables](https://doc.rust-lang.org/cargo/  reference/config.html#environment-variables)) is also available.
 
-And the path to the directory where `z3.lib` or `libz3.lib` is placed can also be specified via an environment variable `Z3_SYS_Z3_LIB_DIR`. I.e., running:
+* And the path to `z3.lib` or `libz3.lib` can also be specified via an environment variable `Z3_SYS_Z3_LIB`. I.e., running:
 
-```console
-$ Z3_SYS_Z3_LIB_DIR="/path/to/my/z3/lib/" cargo build
-```
+  ```console
+  $ Z3_SYS_Z3_LIB="/path/to/my/z3/lib" cargo build
+  ```
 
-in your project will ask the linker to search in `/path/to/my/z3/lib/` instead.
+  in your project will ask the linker to search for `/path/to/my/z3/lib` instead.
+
+  Otherwise, on Windows, it searches for `libz3.lib`, while on other os, it searches for `z3.lib`.
+
+* If the feature `vcpkg` is enabled, it will use the z3 installed with [vcpkg](https://vcpkg.io).
+
+  And it's done with a crate [vcpkg-rs](https://crates.io/crates/vcpkg). You may need to refer to it to know about how to configure them. For example, you may need to install vcpkg on your machine.
+
+  On windows, [vcpkg-rs](https://crates.io/crates/vcpkg) uses `x64-windows-static-md` by default, while [vcpkg](https://vcpkg.io) uses `x64-windows-static` by default.
+
+  It may be a feature that when using dynamically built z3, doctests can't find the dynamic library (for example, `libz3.so` or `libz3.dll`).
+  
+* There are many reasons to use statically built z3, though prebuilt binary by upstream repository [z3](https://github.com/Z3Prover/z3) only provide dynamic library.
+
+  There's [an issue](https://github.com/Z3Prover/z3/issues/6897) for it.
 
 ## Support and Maintenance
 
