@@ -22,14 +22,16 @@ fn main() {
     };
     println!("cargo:rerun-if-env-changed={}", Z3_HEADER_VAR);
     println!("cargo:rerun-if-changed={}", header);
-    
-    if let Ok(lib_dir) = std::env::var(Z3_LIB_VAR) {
-        println!("cargo:rustc-link-search={}", lib_dir);
-    };
-    if cfg!(windows) {
-        println!("cargo:rustc-link-lib=libz3");
+
+    if let Ok(lib) = std::env::var(Z3_LIB_VAR) {
+        println!("cargo:rerun-if-changed={}", lib);
+        let lib = std::path::PathBuf::from(lib);
+        println!("cargo:rustc-link-search=native={}", lib.parent().unwrap().to_str().unwrap());
+        println!("cargo:rustc-link-lib=static={}", lib.file_stem().unwrap().to_str().unwrap());
+    } else if cfg!(windows) {
+        println!("cargo:rustc-link-lib=static=libz3");
     } else {
-        println!("cargo:rustc-link-lib=z3");
+        println!("cargo:rustc-link-lib=static=z3");
     }
     println!("cargo:rerun-if-env-changed={}", Z3_LIB_VAR);
 
