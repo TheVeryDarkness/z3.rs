@@ -1,8 +1,12 @@
 use std::env;
 
+#[cfg(not(feature = "vcpkg"))]
 const Z3_HEADER_VAR: &str = "Z3_SYS_Z3_HEADER";
-const Z3_LIB_VAR: &str = "Z3_SYS_Z3_LIB_DIR";
 
+#[cfg(not(feature = "vcpkg"))]
+const Z3_LIB_VAR: &str = "Z3_SYS_Z3_LIB";
+
+#[cfg(not(feature = "vcpkg"))]
 fn main() {
     #[cfg(feature = "static-link-z3")]
     build_z3();
@@ -29,6 +33,25 @@ fn main() {
     }
     println!("cargo:rerun-if-env-changed={}", Z3_LIB_VAR);
 
+    generate_binding(&header);
+}
+
+#[cfg(feature = "vcpkg")]
+fn main() {
+    let lib = vcpkg::Config::new()
+        .emit_includes(true)
+        .find_package("z3")
+        .unwrap();
+    for include in lib.include_paths.iter() {
+        let mut include = include.clone();
+        include.push("z3.h");
+        if include.exists() {
+            generate_binding(include.to_str().unwrap());
+        }
+    }
+}
+
+fn generate_binding(header: &str) {
     let out_path = std::path::PathBuf::from(std::env::var("OUT_DIR").unwrap());
 
     for x in &[
@@ -43,7 +66,7 @@ fn main() {
         "symbol_kind",
     ] {
         let mut enum_bindings = bindgen::Builder::default()
-            .header(&header)
+            .header(header)
             .parse_callbacks(Box::new(bindgen::CargoCallbacks))
             .generate_comments(false)
             .rustified_enum(format!("Z3_{}", x))
