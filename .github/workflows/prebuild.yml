@@ -1,24 +1,50 @@
 # Release pipeline (must be triggered manually)
 # * Builds for all platforms (with code signing)
-# * Creates packages for Python and NuGet
-# * Uploads build products to stores (GitHub, NuGet, PyPI)
+# * Uploads build products to stores (GitHub)
 name: Prebuild
 
-on:
-  push
+on: push
 
 jobs:
-  prebuild:
+  windows:
     runs-on: windows-2019
     env:
       BUILD_TYPE: Release
     steps:
-    - name: Checkout Repo
-      uses: actions/checkout@v4
-  
-    - name: Build
-      run: |
-        cd z3-sys/z3
-        cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DZ3_BUILD_LIBZ3_SHARED=OFF -DZ3_BUILD_EXECUTABLE=OFF -DZ3_BUILD_TEST_EXECUTABLES=OFF -DZ3_BUILD_LIBZ3_MSVC_STATIC=ON
-        cmake --build build --config ${{ env.BUILD_TYPE }} --parallel
-        tree
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          cd z3-sys/z3
+          cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DZ3_BUILD_LIBZ3_SHARED=OFF -DZ3_BUILD_EXECUTABLE=OFF -DZ3_BUILD_TEST_EXECUTABLES=OFF -DZ3_BUILD_LIBZ3_MSVC_STATIC=ON
+          cmake --build build --config ${{ env.BUILD_TYPE }} --parallel
+          tree
+  macos:
+    runs-on: macOS-10.14
+    env:
+      BUILD_TYPE: Release
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          cd z3-sys/z3
+          cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DZ3_BUILD_LIBZ3_SHARED=OFF -DZ3_BUILD_EXECUTABLE=OFF -DZ3_BUILD_TEST_EXECUTABLES=OFF
+          cmake --build build --config ${{ env.BUILD_TYPE }} --parallel
+          tree
+  linux:
+    runs-on: ubuntu-latest
+    env:
+      BUILD_TYPE: Release
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          cd z3-sys/z3
+          cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DZ3_BUILD_LIBZ3_SHARED=OFF -DZ3_BUILD_EXECUTABLE=OFF -DZ3_BUILD_TEST_EXECUTABLES=OFF
+          cmake --build build --config ${{ env.BUILD_TYPE }} --parallel
+          tree
