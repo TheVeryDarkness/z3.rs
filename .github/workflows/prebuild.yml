@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Build
         run: |
@@ -27,6 +29,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Build
         run: |
@@ -41,7 +45,14 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
+      - name: Install cross build tools
+        run:  apt update && apt install -y ninja-build cmake g++
+        env:
+          DEBIAN_FRONTEND: noninteractive
+  
       - name: Build
         run: |
           cd z3-sys/z3
